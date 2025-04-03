@@ -73,3 +73,35 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Node modules
+node_modules/
+
+# Metro bundler
+metro.config.js
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Android
+android/.gradle/
+android/app/build/
+android/build/
+android/.idea/
+android/local.properties
+
+# iOS
+ios/Pods/
+ios/build/
+ios/DerivedData/
+ios/.idea/
+ios/.vscode/
+
+# React Native Packager
+.expo/
+.expo-shared/
+
+
