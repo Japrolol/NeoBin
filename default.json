@@ -1,0 +1,7 @@
+{
+  "settings": {
+    "minAngle": 0,
+    "maxAngle": 180,
+    "detectDistance": 20
+  }
+}
