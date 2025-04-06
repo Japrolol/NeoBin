@@ -86,7 +86,15 @@ NeoBin is a smart bin project using Bluetooth Low Energy (BLE) for interactive w
 ## Screenshots
 
 <img src="footage/main_gui.PNG" alt="NeoBin App Screenshot" width="400"/>
-Main gui of the app
+*Disconnected*
+<img src="footage/main_gui_connected.PNG" alt="NeoBin App Screenshot" width="400"/>
+*Connected*
+<img src="footage/scanning.PNG" alt="NeoBin App Screenshot" width="400"/>
+*Scanning*
+<img src="footage/found_device.PNG" alt="NeoBin App Screenshot" width="400"/>
+*Device Found*
+<img src="footage/device_settings.PNG" alt="NeoBin App Screenshot" width="400"/>
+*Device Settings*
 
 ## Contributing
 
