@@ -27,10 +27,24 @@ NeoBin is a smart bin project using Bluetooth Low Energy (BLE) for interactive w
     npm install
     ```
 
-3. **Run the Frontend:**
+3. **Start the Metro Server:**
     ```bash
-    npm start
+    npx react-native start
     ```
+
+## Building the Frontend
+
+- **For iOS:**
+    ```bash
+    npx react-native run-ios
+    ```
+
+- **For Android:**
+    ```bash
+    npx react-native run-android
+    ```
+
+- Alternatively, you may have to use Xcode or Android Studio to build and run the application.
 
 ## Configuration
 
@@ -43,14 +57,9 @@ NeoBin is a smart bin project using Bluetooth Low Energy (BLE) for interactive w
 
 ## Development
 
-1. **Start the Development Server:**
+- **Start the Metro Server:**
     ```bash
-    npm run dev
-    ```
-
-2. **Build the Frontend for Production:**
-    ```bash
-    npm run build
+    npx react-native start
     ```
 
 ## Contributing
