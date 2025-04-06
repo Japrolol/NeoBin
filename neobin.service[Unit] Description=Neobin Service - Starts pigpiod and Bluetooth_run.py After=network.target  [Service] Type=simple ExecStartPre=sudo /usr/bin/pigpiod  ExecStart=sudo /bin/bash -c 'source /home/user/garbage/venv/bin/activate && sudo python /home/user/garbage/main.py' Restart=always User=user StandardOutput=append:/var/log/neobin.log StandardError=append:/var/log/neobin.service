@@ -1,0 +1,15 @@
+[Unit]
+Description=Neobin Service - Starts pigpiod and Bluetooth_run.py
+After=network.target
+
+[Service]
+Type=simple
+ExecStartPre=sudo /usr/bin/pigpiod 
+ExecStart=sudo /bin/bash -c 'source /home/user/garbage/venv/bin/activate && sudo python /home/user/garbage/main.py'
+Restart=always
+User=user
+StandardOutput=append:/var/log/neobin.log
+StandardError=append:/var/log/neobin.err
+
+[Install]
+WantedBy=multi-user.target
