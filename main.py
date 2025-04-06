@@ -81,7 +81,7 @@ class NeoService(Service):
             if not (int(self.settings["settings"]["minAngle"]) <= angle <= int(self.settings["settings"]["maxAngle"])):
                 log.warning(f"Invalid angle requested: {angle}")
                 raise InvalidValueLengthException()
-            pulse_width = 500 + (angle * 2000 // 180)
+            pulse_width = 500 + ((180 - angle) * 2000 // 180)
             self.pi.set_servo_pulsewidth(self.SERVO_PIN, pulse_width)
             log.info(f"Servo angle set to {angle}")
         except Exception as e:
@@ -89,7 +89,7 @@ class NeoService(Service):
 
     def set_initial_angle(self):
         # Set the initial angle of the servo motor
-        pulse_width = 500 + (int(self.settings["settings"]["minAngle"]) * 2000 // 180)
+        pulse_width = 500 + ((180-int(self.settings["settings"]["minAngle"])) * 2000 // 180)
         self.pi.set_servo_pulsewidth(self.SERVO_PIN, pulse_width)
 
     def read_json(self):
