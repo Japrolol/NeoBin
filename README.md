@@ -84,17 +84,18 @@ NeoBin is a smart bin project using Bluetooth Low Energy (BLE) for interactive w
 - The frontend interface allows users to interact with the NeoBin backend, open/close the bin lid, view sensor data, and receive notifications.
 
 ## Screenshots
-
+<div style="display: flex; flex-direction: row; flex-wrap: wrap;">
 <img src="footage/main_gui.PNG" alt="NeoBin App Screenshot" width="400"/>
-*Disconnected*
+
 <img src="footage/main_gui_connected.PNG" alt="NeoBin App Screenshot" width="400"/>
-*Connected*
+
 <img src="footage/scanning.PNG" alt="NeoBin App Screenshot" width="400"/>
-*Scanning*
+
 <img src="footage/found_device.PNG" alt="NeoBin App Screenshot" width="400"/>
-*Device Found*
+
 <img src="footage/device_settings.PNG" alt="NeoBin App Screenshot" width="400"/>
-*Device Settings*
+
+</div>
 
 ## Contributing
 
