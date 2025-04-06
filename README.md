@@ -75,6 +75,7 @@ NeoBin is a smart bin project using Bluetooth Low Energy (BLE) for interactive w
 
 ## Configuration
 
+- Configuration settings for the backend can be found in `backend/config.yaml`.
 - You may need to modify your Xcode or Gradle settings for the frontend project. Otherwise, everything should be plug and play.
 
 ## Usage
@@ -84,8 +85,8 @@ NeoBin is a smart bin project using Bluetooth Low Energy (BLE) for interactive w
 
 ## Screenshots
 
-![NeoBin App Screenshot](footage/main_gui.PNG)
-*Description of the screenshot.*
+<img src="footage/main_gui.PNG" alt="NeoBin App Screenshot" width="400"/>
+Main gui of the app
 
 ## Contributing
 
