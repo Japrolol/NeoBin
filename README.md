@@ -10,7 +10,6 @@ NeoBin is a smart bin project using Bluetooth Low Energy (BLE) for interactive w
 
 ## Prerequisites
 
-- A compatible web browser (Chrome, Firefox, etc.)
 - Access to the NeoBin backend server
 
 ## Installation
