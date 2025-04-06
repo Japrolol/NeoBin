@@ -35,12 +35,37 @@ NeoBin is a smart bin project using Bluetooth Low Energy (BLE) for interactive w
 
 ## Configuration
 
-- You made have to modify the pulse width of the servo to fit your needs. I am using a MG995.
+- Configuration settings can be found in `config.yaml`. Adjust the settings according to your hardware setup.
 
 ## Usage
 
 - The backend script (`main.py`) initiates the BLE GATT service and handles hardware interactions.
 - The backend listens for BLE commands and performs actions such as opening/closing the bin lid and sending notifications.
+
+## Service File for Automatic Startup
+
+You can set up the backend to start automatically on system boot by using the provided service file. Follow these steps:
+
+1. **Modify the Service File:**
+    - Open the `neobin.service` file located in the repository.
+    - Update the `ExecStart` and `WorkingDirectory` paths to match your installation directory.
+    - Update the `User` field to match your username.
+
+2. **Copy the Service File:**
+    ```bash
+    sudo cp /path/to/NeoBin/backend/neobin.service /etc/systemd/system/
+    ```
+
+3. **Reload the Systemd Daemon and Enable the Service:**
+    ```bash
+    sudo systemctl daemon-reload
+    sudo systemctl enable neobin.service
+    ```
+
+4. **Start the Service:**
+    ```bash
+    sudo systemctl start neobin.service
+    ```
 
 ## Hardware Integration
 
