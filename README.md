@@ -35,7 +35,7 @@ NeoBin is a smart bin project using Bluetooth Low Energy (BLE) for interactive w
 
 ## Configuration
 
-- Configuration settings can be found in `config.yaml`. Adjust the settings according to your hardware setup.
+- You may have to adjust pulse width based on the servo you use.
 
 ## Usage
 
