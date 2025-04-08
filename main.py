@@ -26,6 +26,8 @@ from BluetoothManager import Characteristic, Service, Application, Descriptor, I
     Advertisement, LE_ADVERTISING_MANAGER_IFACE
 import logging
 
+import subprocess
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(name)s: %(message)s'
@@ -207,6 +209,8 @@ class WriteChrc(Characteristic):
             "STATUS": self.set_status,
             "SETTINGS": self.update_settings,
             "GET_SETTINGS": self.get_settings,
+            "WIFI_DISCONNECT": self.disconnect_from_wifi,
+            "GET_WIFI": self.get_wifi
         }
 
     def get_settings(self):
@@ -221,6 +225,15 @@ class WriteChrc(Characteristic):
             log.info("Sent settings to client")
         except Exception as e:
             log.error(f"Error sending settings: {e}")
+            raise FailedException(str(e))
+    def get_wifi(self):
+        try:
+            self.service.characteristics[2].send_notification(
+                {'WiFiConnectionData': self.service.characteristics[2].get_wifi_status()}
+            )
+            log.info("SENT WIFI DATA TO CLIENT")
+        except Exception as e:
+            log.error(f"Error sending wifi: {e}")
             raise FailedException(str(e))
 
     def update_settings(self, data):
@@ -239,6 +252,34 @@ class WriteChrc(Characteristic):
         except (json.JSONDecodeError, KeyError) as e:
             log.error(f"Failed to update settings: {e}")
             raise InvalidValueLengthException()
+
+    def disconnect_from_wifi(self):
+        try:
+            subprocess.run(["sudo","nmcli","device","disconnect","wlan0"])
+            log.info("Successfully disconnected from WiFi")
+            self.service.characteristics[2].send_notification(
+                {'WiFiConnectionData': self.service.characteristics[2].get_wifi_status()}
+            )
+        except subprocess.CalledProcessError as e:
+            subprocess.run(["sudo", "nmcli", "device", "disconnect", "wlan0"])
+            log.error(f"Failed to disconnect from wifi: {e}")
+
+    def connect_to_wifi(self, command):
+        # Connect to the WiFi
+        ssid = command.split(":")[0]
+        password = command.split(":")[1]
+
+        try:
+            subprocess.run(["sudo", "nmcli", "device", "wifi", "connect", ssid, "password", password], check=True)
+            log.info(f"Successfully connected to WiFi network: {ssid}")
+            self.service.characteristics[2].send_notification(
+                {'WiFiConnectionData': self.service.characteristics[2].get_wifi_status()}
+            )
+        except subprocess.CalledProcessError as e:
+            log.error(f"Failed to connect to WiFi network: {ssid}. Error: {e}")
+            self.service.characteristics[2].send_notification(
+                {'WiFiConnectionData': self.service.characteristics[2].get_wifi_status()}
+            )
 
     def set_open(self):
         # Open the NeoBin
@@ -283,6 +324,8 @@ class WriteChrc(Characteristic):
                 except ValueError:
                     log.warning("Invalid angle format")
                     raise InvalidValueLengthException()
+            elif command.startswith(("CONNECT:")):
+                self.connect_to_wifi(command[8:])
             elif command.startswith("SETTINGS:"):
                 self.update_settings(command[9:])
             elif command in self.command_handler:
@@ -317,6 +360,88 @@ class InformChrc(Characteristic):
     def get_open(self):
         # Check if the NeoBin is open
         return self.service.opened
+
+    def get_wifi_status(self):
+        try:
+            wifi_info = {"connected": False, "ssid": None, "ip_address": None}
+
+            # Check if WiFi is connected at all
+            conn_result = subprocess.run(
+                ["nmcli", "-t", "-f", "TYPE,NAME,DEVICE,STATE", "connection", "show", "--active"],
+                capture_output=True,
+                text=True,
+                check=False
+            )
+
+            wifi_device = None
+            # Find active WiFi connection and get device name
+            for line in conn_result.stdout.strip().split('\n'):
+                if line.startswith('802-11-wireless:'):
+                    parts = line.split(':')
+                    if len(parts) >= 4 and parts[3] == 'activated':
+                        wifi_info["connected"] = True
+                        wifi_device = parts[2]
+                        break
+
+            if not wifi_info["connected"] or not wifi_device:
+                return wifi_info
+
+            # Get SSID using iw dev command
+            try:
+                ssid_result = subprocess.run(
+                    ["iw", "dev", wifi_device, "link"],
+                    capture_output=True,
+                    text=True,
+                    check=False
+                )
+
+                for line in ssid_result.stdout.strip().split('\n'):
+                    if "SSID:" in line:
+                        wifi_info["ssid"] = line.split("SSID:")[1].strip()
+                        break
+            except Exception as e:
+                log.warning(f"Failed to get SSID with iw command: {e}")
+
+            # If SSID is still None, try nmcli dev wifi
+            if not wifi_info["ssid"]:
+                try:
+                    ssid_result = subprocess.run(
+                        ["nmcli", "-t", "-f", "active,ssid", "dev", "wifi"],
+                        capture_output=True,
+                        text=True,
+                        check=False
+                    )
+
+                    for line in ssid_result.stdout.strip().split('\n'):
+                        if line.startswith('yes:'):
+                            wifi_info["ssid"] = line.split(':', 1)[1]
+                            break
+                except Exception as e:
+                    log.warning(f"Failed to get SSID with nmcli dev wifi: {e}")
+
+            # Get IP address
+            if wifi_device:
+                ip_result = subprocess.run(
+                    ["ip", "-f", "inet", "addr", "show", wifi_device],
+                    capture_output=True,
+                    text=True,
+                    check=False
+                )
+
+                # Extract IP address
+                for line in ip_result.stdout.strip().split('\n'):
+                    if "inet " in line:
+                        ip_addr = line.split("inet ")[1].split("/")[0]
+                        wifi_info["ip_address"] = ip_addr
+                        break
+
+            log.info(f"WiFi status: {wifi_info}")
+            return wifi_info
+
+        except Exception as e:
+            log.error(f"Error getting WiFi status: {e}")
+            return {"connected": False, "ssid": None, "ip_address": None}
+
 
     def ReadValue(self, options):
         # Handle read requests
